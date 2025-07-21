@@ -1,0 +1,4 @@
+flask
+spacy
+
+python -m spacy download en_core_web_sm  //run this command to download the spaCy English model
