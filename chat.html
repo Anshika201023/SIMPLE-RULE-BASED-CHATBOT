@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatBuddy</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url("{{ url_for('static', filename='85z_2201_w009_n001_95c_p6_95.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        #overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #chatbox {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        #chatlog {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .bot, .user {
+            margin: 10px 0;
+            padding: 12px 18px;
+            border-radius: 16px;
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .bot {
+            background: #dbeafe;
+            text-align: left;
+            border-top-left-radius: 0;
+        }
+
+        .user {
+            background: #fee2e2;
+            text-align: right;
+            margin-left: auto;
+            border-top-right-radius: 0;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay">
+        <div id="chatbox">
+            <h2>🤖 ChatBuddy</h2>
+            <div id="chatlog">
+                <div class="bot">Hi, I am ChatBuddy. Ask me something!</div>
+            </div>
+            <form id="chatForm">
+                <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const chatlog = document.getElementById('chatlog');
+
+        chatForm.onsubmit = async function (e) {
+            e.preventDefault();
+            const msg = userInput.value.trim();
+            if (!msg) return;
+
+            chatlog.innerHTML += `<div class="user">${msg}</div>`;
+            userInput.value = "";
+
+            const res = await fetch("/get", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `msg=${encodeURIComponent(msg)}`
+            });
+
+            const data = await res.json();
+            chatlog.innerHTML += `<div class="bot">${data.response}</div>`;
+            chatlog.scrollTop = chatlog.scrollHeight;
+        };
+    </script>
+</body>
+</html>
